@@ -1,0 +1,69 @@
+[package]
+name = "test-harness"
+version = "0.1.0"
+authors = ["Mark Hakansson <mark.hakansson@live.se>"]
+edition = "2018"
+
+[dependencies]
+cortex-m-rtic = { path = "../cortex-m-rtic" }
+embedded-hal = "0.2.4"
+nb = "1.0.0"
+panic-halt = "0.2.0"
+
+[dependencies.cortex-m]
+version = "0.7.1"
+
+[dependencies.cortex-m-rt]
+#version = "0.6.13"
+path = "../cortex-m-rt"
+
+[dependencies.stm32f4xx-hal]
+version = "0.8.3"
+features = ["rt", "stm32f401"] # replace the model of your microcontroller here
+
+[dependencies.klee-sys]
+git = "https://gitlab.henriktjader.com/KLEE/klee-sys.git"
+version = "0.2.0"
+optional = true
+
+[dependencies.panic-klee]
+git = "https://gitlab.henriktjader.com/pln/panic-klee.git"
+version = "0.1.0"
+optional = true
+
+[dependencies.vcell]
+version = "0.1.3"
+optional = true
+
+[patch.crates-io]
+cortex-m = { git = "https://github.com/markhakansson/cortex-m.git", branch = "klee" }
+#cortex-m-rt = { git = "https://github.com/markhakansson/cortex-m-rt", branch = "klee" }
+vcell = { git = "https://github.com/markhakansson/vcell.git", branch = "klee" }
+
+[features]
+nightly = ["cortex-m/inline-asm"]
+klee-analysis = [
+    "klee-sys/klee-analysis",
+    "cortex-m/klee-analysis",
+    "vcell/klee-analysis",
+    "panic-klee"
+]
+
+[[bin]]
+name = "test-harness"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # better optimizations
+debug = true # symbols are nice and they don't increase the size on Flash
+lto = true # better optimizations
+incremental = false
+panic = "abort"
+
+[profile.dev]
+codegen-units = 1 # better optimizations
+debug = true # symbols are nice and they don't increase the size on Flash
+lto = true # better optimizations
+incremental = false
+panic = "abort"
