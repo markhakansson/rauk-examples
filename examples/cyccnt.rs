@@ -23,6 +23,6 @@ fn main() {
 
     let end = core.DWT.cyccnt.read();
 
-    let _time = end.wrapping_sub(start);
-    //let _time = end - start;
+    //let _time = end.wrapping_sub(start);
+    let _time = end - start;
 }

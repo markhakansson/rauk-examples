@@ -14,8 +14,7 @@ panic-halt = "0.2.0"
 version = "0.7.1"
 
 [dependencies.cortex-m-rt]
-#version = "0.6.13"
-path = "../cortex-m-rt"
+version = "0.6.11"
 
 [dependencies.stm32f4xx-hal]
 version = "0.8.3"
@@ -37,7 +36,7 @@ optional = true
 
 [patch.crates-io]
 cortex-m = { git = "https://github.com/markhakansson/cortex-m.git", branch = "klee" }
-#cortex-m-rt = { git = "https://github.com/markhakansson/cortex-m-rt", branch = "klee" }
+cortex-m-rt = { git = "https://github.com/markhakansson/cortex-m-rt.git", branch = "klee" }
 vcell = { git = "https://github.com/markhakansson/vcell.git", branch = "klee" }
 
 [features]
@@ -45,6 +44,7 @@ nightly = ["cortex-m/inline-asm"]
 klee-analysis = [
     "klee-sys/klee-analysis",
     "cortex-m/klee-analysis",
+    "cortex-m-rt/klee-analysis",
     "vcell/klee-analysis",
     "panic-klee"
 ]

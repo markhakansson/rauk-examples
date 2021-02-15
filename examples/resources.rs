@@ -15,7 +15,7 @@ mod app {
         a: u8,
     }
     #[init]
-    fn init(_cx: init::Context) -> init::LateResources {
+    fn init(cx: init::Context) -> init::LateResources {
         let value = 30;
         init::LateResources { a: value }
     }
@@ -31,7 +31,7 @@ mod app {
     }
 
     #[idle]
-    fn idle(_cx: idle::Context) -> ! {
+    fn idle(cx: idle::Context) -> ! {
         panic!("idle");
     }
 }
