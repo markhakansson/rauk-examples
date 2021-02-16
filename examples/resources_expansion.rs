@@ -34,6 +34,7 @@ pub mod app {
         use rtic::mutex_prelude::*;
         use rtic::Mutex as _;
         cx.resources.a.lock(|a| *a - 1);
+        cx.resources.b.lock(|b| *b - 10);
     }
     #[doc = r" Resources initialized at runtime"]
     #[allow(non_snake_case)]
@@ -93,6 +94,20 @@ pub mod app {
                 self.priority
             }
         }
+        #[allow(non_camel_case_types)]
+        pub struct b<'a> {
+            priority: &'a Priority,
+        }
+        impl<'a> b<'a> {
+            #[inline(always)]
+            pub unsafe fn new(priority: &'a Priority) -> Self {
+                b { priority }
+            }
+            #[inline(always)]
+            pub unsafe fn priority(&self) -> &Priority {
+                self.priority
+            }
+        }
     }
     #[allow(non_snake_case)]
     #[doc = "Resources `increment` has access to"]
@@ -122,6 +137,7 @@ pub mod app {
     #[doc = "Resources `decrement` has access to"]
     pub struct decrementResources<'a> {
         pub a: resources::a<'a>,
+        pub b: resources::b<'a>,
     }
     #[allow(non_snake_case)]
     #[doc = "Hardware task"]
@@ -173,6 +189,28 @@ pub mod app {
             }
         }
     }
+    #[allow(non_upper_case_globals)]
+    static mut __rtic_internal_b: u16 = 10;
+    impl<'a> rtic::Mutex for resources::b<'a> {
+        type T = u16;
+        #[inline(always)]
+        fn lock<RTIC_INTERNAL_R>(
+            &mut self,
+            f: impl FnOnce(&mut u16) -> RTIC_INTERNAL_R,
+        ) -> RTIC_INTERNAL_R {
+            #[doc = r" Priority ceiling"]
+            const CEILING: u8 = 1u8;
+            unsafe {
+                rtic::export::lock(
+                    &mut __rtic_internal_b,
+                    self.priority(),
+                    CEILING,
+                    stm32f4xx_hal::stm32::NVIC_PRIO_BITS,
+                    f,
+                )
+            }
+        }
+    }
     #[allow(non_snake_case)]
     #[no_mangle]
     unsafe fn EXTI0() {
@@ -206,6 +244,7 @@ pub mod app {
         pub unsafe fn new(priority: &'a rtic::export::Priority) -> Self {
             decrementResources {
                 a: resources::a::new(priority),
+                b: resources::b::new(priority),
             }
         }
     }
@@ -240,7 +279,6 @@ pub mod app {
             crate::app::idle(idle::Context::new(&rtic::export::Priority::new(0)))
         }
     }
-
     #[cfg(feature = "klee-analysis")]
     #[doc = r" klee module"]
     mod rtic_ext {
@@ -250,9 +288,12 @@ pub mod app {
         unsafe extern "C" fn main() {
             let mut task = 0;
             let mut a: u8 = 0;
+            let mut b: u16 = 0;
             klee_make_symbolic!(&mut task, "task");
             klee_make_symbolic!(&mut a, "a");
+            klee_make_symbolic!(&mut b, "b");
             __rtic_internal_a.as_mut_ptr().write(a);
+            __rtic_internal_b = b;
             match task {
                 0u32 => {
                     crate::app::increment(increment::Context::new(&rtic::export::Priority::new(1)));

@@ -13,7 +13,10 @@ mod app {
     #[resources]
     struct Resources {
         a: u8,
+        #[init(10)]
+        b: u16,
     }
+
     #[init]
     fn init(_cx: init::Context) -> init::LateResources {
         let value = 30;
@@ -25,9 +28,10 @@ mod app {
         cx.resources.a.lock(|a| *a + 1);
     }
 
-    #[task(binds = EXTI1, resources = [a])]
+    #[task(binds = EXTI1, resources = [a, b])]
     fn decrement(mut cx: decrement::Context) {
         cx.resources.a.lock(|a| *a - 1);
+        cx.resources.b.lock(|b| *b - 10);
     }
 
     #[idle]
