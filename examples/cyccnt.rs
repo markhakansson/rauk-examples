@@ -5,10 +5,10 @@
 
 extern crate cortex_m;
 
+#[cfg(feature = "klee-analysis")]
+use panic_abort as _;
 #[cfg(not(feature = "klee-analysis"))]
 use panic_halt as _;
-#[cfg(feature = "klee-analysis")]
-use panic_klee as _;
 
 #[no_mangle]
 fn main() {

@@ -1,10 +1,10 @@
 #![no_main]
 #![no_std]
 
+#[cfg(feature = "klee-analysis")]
+use panic_abort as _;
 #[cfg(not(feature = "klee-analysis"))]
 use panic_halt as _;
-#[cfg(feature = "klee-analysis")]
-use panic_klee as _;
 
 #[doc = r" Implementation details"]
 pub mod app {
@@ -287,18 +287,15 @@ pub mod app {
         #[no_mangle]
         unsafe extern "C" fn main() {
             let mut task = 0;
-            let mut a: u8 = 0;
-            let mut b: u16 = 0;
             klee_make_symbolic!(&mut task, "task");
-            klee_make_symbolic!(&mut a, "a");
-            klee_make_symbolic!(&mut b, "b");
-            __rtic_internal_a.as_mut_ptr().write(a);
-            __rtic_internal_b = b;
             match task {
                 0u32 => {
-                    crate::app::increment(increment::Context::new(&rtic::export::Priority::new(1)));
+                    klee_make_symbolic!(&mut __rtic_internal_a, "app::resources::a");
+                    crate::app::increment(increment::Context::new(&rtic::export::Priority::new(1)))
                 }
                 1u32 => {
+                    klee_make_symbolic!(&mut __rtic_internal_a, "app::resources::a");
+                    klee_make_symbolic!(&mut __rtic_internal_b, "app::resources::b");
                     crate::app::decrement(decrement::Context::new(&rtic::export::Priority::new(1)));
                 }
                 2u32 => {
