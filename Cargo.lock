@@ -50,9 +50,9 @@ checksum = "46afbd2983a5d5a7bd740ccb198caf5b82f45c40c09c0eed36052d91cb92e719"
 
 [[package]]
 name = "byteorder"
-version = "1.4.2"
+version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae44d1a3d5a19df61dd0c8beb138458ac2a53a7ac09eba97d55592540004306b"
+checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "cast"
@@ -72,14 +72,14 @@ dependencies = [
  "aligned",
  "bare-metal 0.2.5",
  "bitfield",
- "cortex-m 0.7.1",
+ "cortex-m 0.7.2",
  "volatile-register",
 ]
 
 [[package]]
 name = "cortex-m"
-version = "0.7.1"
-source = "git+https://github.com/markhakansson/cortex-m.git?branch=klee#f972529d9b199e4bfb229d899cd891455e1e0b2b"
+version = "0.7.2"
+source = "git+https://github.com/markhakansson/cortex-m.git?branch=klee#ac21b94e1c8409908731da90a0c1ab5506d3b043"
 dependencies = [
  "bare-metal 0.2.5",
  "bitfield",
@@ -111,7 +111,7 @@ name = "cortex-m-rtic"
 version = "0.6.0-alpha.1"
 dependencies = [
  "bare-metal 1.0.0",
- "cortex-m 0.7.1",
+ "cortex-m 0.7.2",
  "cortex-m-rtic-macros",
  "heapless",
  "rtic-core",
@@ -331,16 +331,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "panic-abort"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e20e6499bbbc412f280b04a42346b356c6fa0753d5fd22b7bd752ff34c778ee"
-
-[[package]]
 name = "panic-halt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "de96540e0ebde571dc55c73d60ef407c653844e6f9a1e2fdbd40c07b9252d812"
+
+[[package]]
+name = "panic-klee"
+version = "0.1.0"
+source = "git+https://gitlab.henriktjader.com/pln/panic-klee.git#3b0c897f49d7fff017424364e280bcb9dbaffa5d"
 
 [[package]]
 name = "proc-macro-error"
@@ -478,9 +477,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.62"
+version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "123a78a3596b24fee53a6464ce52d8ecbf62241e6294c7e7fe12086cd161f512"
+checksum = "8fd9bc7ccc2688b3344c2f48b9b546648b25ce0b20fc717ee7fa7981a8ca9717"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -491,14 +490,14 @@ dependencies = [
 name = "test-harness"
 version = "0.1.0"
 dependencies = [
- "cortex-m 0.7.1",
+ "cortex-m 0.7.2",
  "cortex-m-rt",
  "cortex-m-rtic",
  "embedded-hal",
  "klee-sys 0.2.0 (git+https://gitlab.henriktjader.com/KLEE/klee-sys.git)",
  "nb 1.0.0",
- "panic-abort",
  "panic-halt",
+ "panic-klee",
  "stm32f4xx-hal",
  "vcell",
 ]

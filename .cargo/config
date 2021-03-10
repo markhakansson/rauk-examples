@@ -33,7 +33,6 @@ runner = "arm-none-eabi-gdb -q -x openocd.gdb"
 rustflags = [
   "--emit=llvm-bc,llvm-ir",
   "-C", "linker=true",
-  #"-Z", "thinlto=no",
 ]
 
 [build]

@@ -1,11 +1,11 @@
 #![no_main]
 #![no_std]
-#![feature(asm)]
+//#![feature(asm)]
 
-#[cfg(feature = "klee-analysis")]
-use panic_abort as _;
 #[cfg(not(feature = "klee-analysis"))]
 use panic_halt as _;
+#[cfg(feature = "klee-analysis")]
+use panic_klee as _;
 
 #[rtic::app(device = stm32f4xx_hal::stm32, peripherals = true, dispatchers = [USART1])]
 mod app {
@@ -38,10 +38,11 @@ mod app {
         cx.resources.b.lock(|b| *b - 10);
     }
 
-    #[task(resources = [c])]
-    fn software_task(mut cx: software_task::Context) {
-        cx.resources.c.lock(|c| *c + 50);
-    }
+    // Software task not yet supported
+    // #[task(resources = [c])]
+    // fn software_task(mut cx: software_task::Context) {
+    //     cx.resources.c.lock(|c| *c + 50);
+    // }
 
     #[idle]
     fn idle(_cx: idle::Context) -> ! {
