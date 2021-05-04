@@ -8,6 +8,7 @@ use panic_klee as _;
 
 #[rtic::app(device = stm32f4xx_hal::stm32, peripherals = true, dispatchers = [USART1])]
 mod app {
+    use cortex_m::asm;
     use stm32f4xx_hal::{gpio::*, prelude::*};
 
     #[resources]
@@ -58,6 +59,10 @@ mod app {
     fn reading(mut cx: reading::Context) {
         let start: u32 = cx.resources.dwt.lock(|dwt| dwt.cyccnt.read());
         let end: u32 = cx.resources.dwt.lock(|dwt| dwt.cyccnt.read());
+        if end == 1234 {
+            asm::delay(10_000);
+            let _x: u32 = cx.resources.dwt.lock(|dwt| dwt.cyccnt.read());
+        };
         let time = end - start;
         cx.resources.buffer.lock(|buffer| buffer[0] = time);
     }
