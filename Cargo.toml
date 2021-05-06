@@ -33,10 +33,6 @@ git = "https://github.com/markhakansson/klee-rs.git"
 version = "0.1"
 optional = true
 
-[dependencies.rtic-core]
-version = "0.3.1"
-optional = true
-
 [dependencies.vcell]
 version = "0.1.3"
 optional = true
@@ -47,7 +43,6 @@ cortex-m-rt = { git = "https://github.com/markhakansson/cortex-m-rt.git", branch
 #cortex-m-rtic = { git = "https://github.com/markhakansson/cortex-m-rtic.git", branch = "klee-mode" }
 cortex-m-rtic = { path = "../cortex-m-rtic" }
 vcell = { path = "../vcell" }
-rtic-core = { path = "../rtic-core" }
 
 [features]
 klee-analysis = [
@@ -59,7 +54,6 @@ klee-analysis = [
 klee-replay = [
     "cortex-m-rtic/klee-replay",
     "vcell/klee-replay",
-    "rtic-core/rauk"
 ]
 
 [profile.release]

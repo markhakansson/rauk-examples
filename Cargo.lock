@@ -79,12 +79,12 @@ dependencies = [
 [[package]]
 name = "cortex-m"
 version = "0.7.2"
-source = "git+https://github.com/markhakansson/cortex-m.git?branch=rauk-0.6.0-alpha.2#b8e50fc44793a78a11f2172370d936924b8e47ed"
+source = "git+https://github.com/markhakansson/cortex-m.git?branch=klee#3fcfde727d26480b2ac9ba656d80224b22693539"
 dependencies = [
  "bare-metal 0.2.5",
  "bitfield",
  "embedded-hal",
- "klee-rs 0.1.0 (git+https://github.com/markhakansson/klee-rs.git)",
+ "klee-sys",
  "volatile-register",
 ]
 
@@ -95,19 +95,16 @@ source = "git+https://github.com/markhakansson/cortex-m-asm.git#86ad2d7311283a7b
 
 [[package]]
 name = "cortex-m-rt"
-version = "0.6.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "980c9d0233a909f355ed297ef122f257942de5e0a2cb1c39f60684b65bcb90fb"
+version = "0.6.11"
+source = "git+https://github.com/markhakansson/cortex-m-rt.git?branch=klee#ed2b6a94380dcb1841e8b5a33d525d1ca908e9d6"
 dependencies = [
  "cortex-m-rt-macros",
- "r0",
 ]
 
 [[package]]
 name = "cortex-m-rt-macros"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4717562afbba06e760d34451919f5c3bf3ac15c7bb897e8b04862a7428378647"
+version = "0.6.11"
+source = "git+https://github.com/markhakansson/cortex-m-rt.git?branch=klee#ed2b6a94380dcb1841e8b5a33d525d1ca908e9d6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -117,7 +114,6 @@ dependencies = [
 [[package]]
 name = "cortex-m-rtic"
 version = "0.6.0-alpha.2"
-source = "git+https://github.com/markhakansson/cortex-m-rtic.git?branch=rauk-0.6.0-alpha.2#3c7bcd51329984d740879ad2cd0ff328d0e36973"
 dependencies = [
  "bare-metal 1.0.0",
  "cortex-m 0.7.2",
@@ -132,13 +128,22 @@ dependencies = [
 [[package]]
 name = "cortex-m-rtic-macros"
 version = "0.6.0-alpha.2"
-source = "git+https://github.com/markhakansson/cortex-m-rtic.git?branch=rauk-0.6.0-alpha.2#3c7bcd51329984d740879ad2cd0ff328d0e36973"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
  "quote",
  "rtic-syntax",
  "syn",
+]
+
+[[package]]
+name = "cstr_core"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2807c5e92588b6bf1c8c0354af2a4f079d0586c683df322aea719d5dc9b8d5bb"
+dependencies = [
+ "cty",
+ "memchr",
 ]
 
 [[package]]
@@ -247,6 +252,20 @@ source = "git+https://github.com/markhakansson/klee-rs.git#46aecbfa73388ddc47114
 dependencies = [
  "cty",
 ]
+
+[[package]]
+name = "klee-sys"
+version = "0.2.0"
+source = "git+https://gitlab.henriktjader.com/pln/klee-sys.git#9f462cc550496ba9393fd5e29c94d3402e64be05"
+dependencies = [
+ "cstr_core",
+]
+
+[[package]]
+name = "memchr"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b16bd47d9e329435e309c58469fe0791c2d0d1ba96ec0954152a5ae2b04387dc"
 
 [[package]]
 name = "nb"
@@ -380,12 +399,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "r0"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2a38df5b15c8d5c7e8654189744d8e396bddc18ad48041a500ce52d6948941f"
-
-[[package]]
 name = "rand_core"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -500,7 +513,6 @@ dependencies = [
  "nb 1.0.0",
  "panic-halt",
  "panic-klee",
- "rtic-core",
  "stm32f4xx-hal",
  "vcell",
 ]
@@ -520,7 +532,6 @@ checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 [[package]]
 name = "vcell"
 version = "0.1.3"
-source = "git+https://github.com/markhakansson/vcell.git?branch=klee#947815a5c08440ee44cad5b8445b2a2e1b5ea80b"
 dependencies = [
  "cortex-m-asm",
  "klee-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
