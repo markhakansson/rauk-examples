@@ -81,6 +81,7 @@ mod app {
 
     // Aperiodic task that does some work everytime the button is pressed
     #[task(binds = EXTI15_10, priority = 2, resources = [button, shared_u8, shared_u16])]
+    #[rauk]
     fn button_click(mut cx: button_click::Context) {
         // Clear interrupt
         cx.resources
@@ -95,6 +96,7 @@ mod app {
 
     // Periodic task that toggles the LED every 1s
     #[task(binds = TIM2, resources = [led, led_on, timer, shared_u8, shared_u16])]
+    #[rauk]
     fn toggle_led(mut cx: toggle_led::Context) {
         // Clear interrupt
         cx.resources.timer.lock(|timer| {
