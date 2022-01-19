@@ -1,3 +1,4 @@
 [general]
 target = "thumbv7em-none-eabi"
 chip = "STM32F401RETx"
+halt-timeout = 5
