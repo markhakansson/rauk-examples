@@ -17,12 +17,10 @@ mod app {
         timer::{Event, Timer},
     };
 
-    #[resources]
-    struct Resources {
-        #[init(false)]
+    #[shared]
+    struct Shared {
         led_on: bool,
         shared_u8: u8,
-        #[init(1337)]
         shared_u16: u16,
         led: gpioa::PA5<Output<PushPull>>,
         timer: Timer<stm32::TIM2>,
@@ -30,8 +28,11 @@ mod app {
         dwt: DWT,
     }
 
+    #[local]
+    struct Local {}
+
     #[init]
-    fn init(mut cx: init::Context) -> (init::LateResources, init::Monotonics) {
+    fn init(mut cx: init::Context) -> (Shared, Local, init::Monotonics) {
         // Setup clocks
         let rcc = cx.device.RCC.constrain();
         let clocks = rcc
@@ -70,46 +71,47 @@ mod app {
 
         let value = 30;
         (
-            init::LateResources {
+            Shared {
+                led_on: false,
                 shared_u8: value,
+                shared_u16: 1337,
                 led,
                 timer,
                 button,
                 dwt: cx.core.DWT,
             },
+            Local {},
             init::Monotonics {},
         )
     }
 
     // Aperiodic task that does some work everytime the button is pressed
-    #[task(binds = EXTI15_10, priority = 2, resources = [button, shared_u8, shared_u16, dwt])]
-    #[rauk]
+    #[task(binds = EXTI15_10, priority = 2, shared = [button, shared_u8, shared_u16, dwt])]
     fn button_click(mut cx: button_click::Context) {
         // Clear interrupt
-        cx.resources
+        cx.shared
             .button
             .lock(|button| button.clear_interrupt_pending_bit());
 
         // Some nonsensical work here...
-        cx.resources.shared_u8.lock(|i| *i += 1);
-        let value: u32 = cx.resources.dwt.lock(|dwt| dwt.cyccnt.read());
+        cx.shared.shared_u8.lock(|i| *i += 1);
+        let value: u32 = cx.shared.dwt.lock(|dwt| dwt.cyccnt.read());
         if value == 123456789 {
             asm::delay(10_000);
         }
-        cx.resources.shared_u16.lock(|i| *i += 3);
+        cx.shared.shared_u16.lock(|i| *i += 3);
     }
 
     // Periodic task that toggles the LED every 1s
-    #[task(binds = TIM2, resources = [led, led_on, timer, shared_u8, shared_u16])]
-    #[rauk]
+    #[task(binds = TIM2, shared = [led, led_on, timer, shared_u8, shared_u16])]
     fn toggle_led(mut cx: toggle_led::Context) {
         // Clear interrupt
-        cx.resources.timer.lock(|timer| {
+        cx.shared.timer.lock(|timer| {
             timer.clear_interrupt(Event::TimeOut);
         });
 
-        let mut su8 = cx.resources.shared_u8;
-        let mut su16 = cx.resources.shared_u16;
+        let mut su8 = cx.shared.shared_u8;
+        let mut su16 = cx.shared.shared_u16;
 
         // Check the shared resources and do some work here in rare cases
         su8.lock(|su8| {
@@ -124,17 +126,17 @@ mod app {
             });
         });
 
-        let powered_on = cx.resources.led_on.lock(|led_on| *led_on);
+        let powered_on = cx.shared.led_on.lock(|led_on| *led_on);
         if !powered_on {
-            cx.resources.led.lock(|led| {
+            cx.shared.led.lock(|led| {
                 led.set_high().unwrap();
             });
-            cx.resources.led_on.lock(|led_on| *led_on = true);
+            cx.shared.led_on.lock(|led_on| *led_on = true);
         } else {
-            cx.resources.led.lock(|led| {
+            cx.shared.led.lock(|led| {
                 led.set_low().unwrap();
             });
-            cx.resources.led_on.lock(|led_on| *led_on = false);
+            cx.shared.led_on.lock(|led_on| *led_on = false);
         }
     }
 
